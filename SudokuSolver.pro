@@ -19,6 +19,6 @@ HEADERS  += mainwindow.h
 
 FORMS    += mainwindow.ui
 
-INCLUDEPATH += "c:/opencv-4.1.1/build/install/include"
+INCLUDEPATH += "d:/opencv-4.1.1/build/install/include"
 
-LIBS += "c:/opencv-4.1.1/build/install/x64/mingw/bin/libopencv*.dll"
+LIBS += "d:/opencv-4.1.1/build/install/x64/mingw/bin/libopencv*.dll"
