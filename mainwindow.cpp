@@ -1,5 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "detectgrid.h"
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -20,8 +21,13 @@ using namespace cv;
 void MainWindow::on_pushButton_File_clicked()
 {
     Mat src;
+    Mat clean;
+    std::vector<Rect> dummyRect;
+    DetectGrid dummyGrid;
+    std::vector<float> gPoints;
+    float scale = 1.0;
 
-    src = imread("C:/HAN/Semester_7 Vision minor/EVD1/EVD1_Exercise2_1/Afbeeldingen/dark_flower.bmp",IMREAD_COLOR);
+    src = imread("D://QtProjects/sudoku1.png",IMREAD_GRAYSCALE);
     if(!src.data) {
         ui->statusBar->showMessage(QString("Could not open image!"),0);
     }
@@ -42,33 +48,11 @@ void MainWindow::on_pushButton_File_clicked()
         moveWindow("Original image", 100, 100);
 
 
+
+        dummyRect = dummyGrid.FindDigitRects(src, clean, gPoints, scale);
         // Show the image
         imshow("Original image",src);
-
-        //Split
-        Mat spl[3];
-        split(src,spl);
-
-        // Create a window
-        namedWindow("Red", WINDOW_AUTOSIZE);
-        moveWindow("Red", 350, 200);
-        namedWindow("Green", WINDOW_AUTOSIZE);
-        moveWindow("Green", 250, 300);
-        namedWindow("Blue", WINDOW_AUTOSIZE);
-        moveWindow("Blue", 150, 400);
-        namedWindow("Blue", WINDOW_AUTOSIZE);
-        moveWindow("HSV", 400, 400);
-        namedWindow("HSV", WINDOW_AUTOSIZE);
-        // Show the image
-        imshow("Red", spl[0]);
-        imshow("Green", spl[1]);
-        imshow("Blue", spl[2]);
-
-        // Convert to HSV
-        Mat hsv(width,height,CV_8UC1,1);
-        cvtColor(src,hsv,COLOR_BGR2HSV);
-        imshow("HSV", hsv);
-
+        imshow("cleaned", clean);
     }
 }
 
