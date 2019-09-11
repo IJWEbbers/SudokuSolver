@@ -23,8 +23,6 @@ private:
    Ui::MainWindow *ui;
 
 private slots:
-   void on_pbFile_clicked();
-   void on_pbSnapShot_clicked();
    void on_pushButton_Webcam_clicked();
    void on_pushButton_File_clicked();
 };
