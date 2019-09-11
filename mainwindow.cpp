@@ -1,12 +1,14 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-
+#include "opencv2/imgproc.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgcodecs.hpp"
+#include <iostream>
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::MainWindow)
 {
-    //test
     ui->setupUi(this);
 }
 
@@ -16,13 +18,19 @@ MainWindow::~MainWindow()
 }
 
 using namespace cv;
+using namespace std;
 
+Mat src_gray;
+int thresh = 10;
+RNG rng(12345);
+
+void thresh_callback(int, void* );
 
 void MainWindow::on_pushButton_File_clicked()
 {
     Mat src;
-
-    src = imread("C:/HAN/Semester_7 Vision minor/EVD1/EVD1_Exercise2_1/Afbeeldingen/dark_flower.bmp",IMREAD_COLOR);
+    void step2(Mat src);
+    src = imread("C:/HAN/Semester_7 Vision minor/Project Git/SudokuSolver/Images/SudokuExampleImage.jpg",IMREAD_COLOR);
     if(!src.data) {
         ui->statusBar->showMessage(QString("Could not open image!"),0);
     }
@@ -42,35 +50,70 @@ void MainWindow::on_pushButton_File_clicked()
         namedWindow("Original image", WINDOW_AUTOSIZE);
         moveWindow("Original image", 100, 100);
 
-
         // Show the image
         imshow("Original image",src);
 
-        //Split
-        Mat spl[3];
-        split(src,spl);
+        cvtColor( src, src_gray, COLOR_BGR2GRAY );
+        blur( src_gray, src_gray, Size(3,3) );
+        const char* source_window = "Source";
+        namedWindow( source_window );
+        imshow( source_window, src );
+        const int max_thresh = 255;
+        createTrackbar( "Canny thresh:", source_window, &thresh, max_thresh, thresh_callback );
+        thresh_callback(0, 0);
+        waitKey();
 
-        // Create a window
-        namedWindow("Red", WINDOW_AUTOSIZE);
-        moveWindow("Red", 350, 200);
-        namedWindow("Green", WINDOW_AUTOSIZE);
-        moveWindow("Green", 250, 300);
-        namedWindow("Blue", WINDOW_AUTOSIZE);
-        moveWindow("Blue", 150, 400);
-        namedWindow("Blue", WINDOW_AUTOSIZE);
-        moveWindow("HSV", 400, 400);
-        namedWindow("HSV", WINDOW_AUTOSIZE);
-        // Show the image
-        imshow("Red", spl[0]);
-        imshow("Green", spl[1]);
-        imshow("Blue", spl[2]);
-
-        // Convert to HSV
-        Mat hsv(width,height,CV_8UC1,1);
-        cvtColor(src,hsv,COLOR_BGR2HSV);
-        imshow("HSV", hsv);
 
     }
+}
+
+void thresh_callback(int, void* )
+{
+    Mat canny_output;
+    Canny( src_gray, canny_output, thresh, thresh*2 );
+    vector<vector<Point> > contours;
+    findContours( canny_output, contours, RETR_TREE, CHAIN_APPROX_SIMPLE );
+    vector<vector<Point> > contours_poly( contours.size() );
+    vector<Rect> boundRect( contours.size() );
+    vector<Point2f>centers( contours.size() );
+   // vector<float>radius( contours.size() );
+    for( size_t i = 0; i < contours.size(); i++ )
+    {
+        approxPolyDP( contours[i], contours_poly[i], 3, true );
+        boundRect[i] = boundingRect( contours_poly[i] );
+        //minEnclosingCircle( contours_poly[i], centers[i], radius[i] );
+    }
+    Mat drawing = Mat::zeros( canny_output.size(), CV_8UC3 );
+    for( size_t i = 0; i< contours.size(); i++ )
+    {
+        Scalar color = Scalar( rng.uniform(0, 256), rng.uniform(0,256), rng.uniform(0,256) );
+        drawContours( drawing, contours_poly, static_cast<int>(i), color );
+        //rectangle( drawing, boundRect[i].tl(), boundRect[i].br(), color, 1 );
+        //circle( drawing, centers[i], static_cast<int>(radius[i]), color, 2 );
+    }
+    imshow( "Contours", drawing );
+}
+
+void step2(Mat src)
+{
+    Mat gray;
+    cvtColor(src,gray,COLOR_BGR2GRAY);
+    threshold(gray,gray,200,255,THRESH_BINARY_INV);
+
+    vector< vector <Point> > contours;
+    vector< Vec4i > hierarchy;
+
+    findContours( gray, contours, hierarchy,RETR_CCOMP, CHAIN_APPROX_SIMPLE );
+
+    for( size_t i = 0; i < contours.size(); i=static_cast<size_t>( hierarchy[i][0]) )
+    {
+        Rect r= boundingRect(contours[i]);
+        rectangle(src,Point(r.x,r.y), Point(r.x+r.width,r.y+r.height), Scalar(0,0,255),1,8,0);
+    }
+
+    imwrite("result2.jpg",src);
+    imshow("step 2 result",src);
+    //waitKey();
 }
 
 void MainWindow::on_pushButton_Webcam_clicked()
