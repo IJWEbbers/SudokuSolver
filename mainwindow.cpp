@@ -1,9 +1,15 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "numberrecognition.h"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include <iostream>
+#include <sstream>
+
+
+// global variables
+
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -26,11 +32,13 @@ RNG rng(12345);
 
 void thresh_callback(int, void* );
 
+
+
 void MainWindow::on_pushButton_File_clicked()
 {
     Mat src;
     void step2(Mat src);
-    src = imread("C:/HAN/Semester_7 Vision minor/Project Git/SudokuSolver/Images/SudokuExampleImage.jpg",IMREAD_COLOR);
+    src = imread("C:/HAN/Semester_7 Vision minor/Project Git/SudokuSolver/Images/crackynumbers.png",IMREAD_COLOR);
     if(!src.data) {
         ui->statusBar->showMessage(QString("Could not open image!"),0);
     }
@@ -53,16 +61,7 @@ void MainWindow::on_pushButton_File_clicked()
         // Show the image
         imshow("Original image",src);
 
-        cvtColor( src, src_gray, COLOR_BGR2GRAY );
-        blur( src_gray, src_gray, Size(3,3) );
-        const char* source_window = "Source";
-        namedWindow( source_window );
-        imshow( source_window, src );
-        const int max_thresh = 255;
-        createTrackbar( "Canny thresh:", source_window, &thresh, max_thresh, thresh_callback );
-        thresh_callback(0, 0);
-        waitKey();
-
+        numberRecognition(src);
 
     }
 }
@@ -76,7 +75,7 @@ void thresh_callback(int, void* )
     vector<vector<Point> > contours_poly( contours.size() );
     vector<Rect> boundRect( contours.size() );
     vector<Point2f>centers( contours.size() );
-   // vector<float>radius( contours.size() );
+    // vector<float>radius( contours.size() );
     for( size_t i = 0; i < contours.size(); i++ )
     {
         approxPolyDP( contours[i], contours_poly[i], 3, true );
