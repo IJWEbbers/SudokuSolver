@@ -1,6 +1,14 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "detectgrid.h"
+#include "numberrecognition.h"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/highgui.hpp"
+#include "opencv2/imgcodecs.hpp"
+#include <iostream>
+#include <sstream>
+
+
+// global variables
 
 
 MainWindow::MainWindow(QWidget *parent) :
@@ -16,18 +24,21 @@ MainWindow::~MainWindow()
 }
 
 using namespace cv;
+using namespace std;
+
+Mat src_gray;
+int thresh = 10;
+RNG rng(12345);
+
+void thresh_callback(int, void* );
+
 
 
 void MainWindow::on_pushButton_File_clicked()
 {
     Mat src;
-    Mat clean;
-    std::vector<Rect> dummyRect;
-    DetectGrid dummyGrid;
-    std::vector<float> gPoints;
-    float scale = 1.0;
-
-    src = imread("D://QtProjects/sudoku1.png",IMREAD_GRAYSCALE);
+    void step2(Mat src);
+    src = imread("C:/HAN/Semester_7 Vision minor/Project Git/SudokuSolver/Images/crackynumbers.png",IMREAD_COLOR);
     if(!src.data) {
         ui->statusBar->showMessage(QString("Could not open image!"),0);
     }
@@ -47,12 +58,11 @@ void MainWindow::on_pushButton_File_clicked()
         namedWindow("Original image", WINDOW_AUTOSIZE);
         moveWindow("Original image", 100, 100);
 
-
-
-        dummyRect = dummyGrid.FindDigitRects(src, clean, gPoints, scale);
         // Show the image
         imshow("Original image",src);
-        imshow("cleaned", clean);
+
+        numberRecognition(src);
+
     }
 }
 
