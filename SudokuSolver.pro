@@ -14,10 +14,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-        numberrecognition.cpp
+        numberrecognition.cpp \
+        trainingprogram.cpp
 
 HEADERS  += mainwindow.h \
-    numberrecognition.h
+    numberrecognition.h \
+    trainingprogram.h
 
 FORMS    += mainwindow.ui
 

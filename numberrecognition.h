@@ -4,18 +4,13 @@
 #include "opencv2/imgproc.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgcodecs.hpp"
-#include <iostream>
-#include <sstream>
-
-using namespace cv;
-using namespace std;
 
 const int MIN_CONTOUR_AREA = 100;
 
 class ContourWithData {
 public:
     // member variables
-    double fltArea;                              // area of contour
+    double fltArea;                             // area of contour
     std::vector<cv::Point> ptContour;           // contour
     cv::Rect boundingRect;                      // bounding rect for contour
 
@@ -30,6 +25,6 @@ public:
 
 };
 
-void numberRecognition(Mat matTestingNumbers);
+void numberRecognition(cv::Mat matTestingNumbers);
 
 #endif // NUMBERRECOGNITION_H

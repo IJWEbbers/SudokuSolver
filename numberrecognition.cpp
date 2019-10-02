@@ -12,10 +12,20 @@ const int RESIZED_IMAGE_WIDTH = 20;
 const int RESIZED_IMAGE_HEIGHT = 30;
 
 
-void numberRecognition(Mat matTestingNumbers)
+void numberRecognition(cv::Mat matTestingNumbers)
 {
+    if (matTestingNumbers.empty()) {                                // if unable to open image
+        std::cout << "error: image not read from file\n\n";         // show error message on command line
+        return;                                                  // and exit program
+    }
     std::vector<ContourWithData> allContoursWithData;           // declare empty vectors,
     std::vector<ContourWithData> validContoursWithData;         // we will fill these shortly
+
+    //=============Configure the Region Of Interest(ROI)===============
+    cv::Mat matTestingNumbersROI = matTestingNumbers(cv::Rect(200,200,200,100));//creating a rectangle of size 200x100 at point (200,200) on the videofeed
+
+    cv::Rect rect(198, 198, 204, 104);//Define the rectangle size
+    rectangle(matTestingNumbers, rect, cv::Scalar(0, 0, 255),2);//Put the rectangle on the original webcam image. We do operations with matTestingNumbersROI. so if we would put a rectangle on matTestingNumbersROI, the program thinks the rectangle is a number
 
     //===============read in training classifications===============
 
@@ -25,7 +35,7 @@ void numberRecognition(Mat matTestingNumbers)
 
     if (fsClassifications.isOpened() == false) {                                                    // if the file was not opened successfully
         std::cout << "error, unable to open training classifications file, exiting program\n\n";    // show error message
-        //return(0);                                                                                  // and exit program
+        return;                                                                                  // and exit program
     }
 
     fsClassifications["classifications"] >> matClassificationInts;      // read classifications section into Mat classifications variable
@@ -39,7 +49,7 @@ void numberRecognition(Mat matTestingNumbers)
 
     if (fsTrainingImages.isOpened() == false) {                                                 // if the file was not opened successfully
         std::cout << "error, unable to open training images file, exiting program\n\n";         // show error message
-        //return(0);                                                                              // and exit program
+        return;                                                                              // and exit program
     }
 
     fsTrainingImages["images"] >> matTrainingImagesAsFlattenedFloats;           // read images section into Mat training images variable
@@ -57,24 +67,21 @@ void numberRecognition(Mat matTestingNumbers)
     //Line below implemented in function
     //cv::Mat matTestingNumbers = cv::imread(src);            // read in the test numbers image
 
-    if (matTestingNumbers.empty()) {                                // if unable to open image
-        std::cout << "error: image not read from file\n\n";         // show error message on command line
-        //return(0);                                                  // and exit program
-    }
+
 
     cv::Mat matGrayscale;           //
     cv::Mat matBlurred;             // declare more image variables
     cv::Mat matThresh;              //
     cv::Mat matThreshCopy;          //
 
-    cv::cvtColor(matTestingNumbers, matGrayscale, COLOR_BGR2GRAY);         // convert to grayscale
+    cv::cvtColor(matTestingNumbersROI, matGrayscale, cv::COLOR_BGR2GRAY);         // convert to grayscale //r
 
     // blur
     cv::GaussianBlur(matGrayscale,              // input image
                      matBlurred,                // output image
                      cv::Size(5, 5),            // smoothing window width and height in pixels
                      0);                        // sigma value, determines how much the image will be blurred, zero makes function choose the sigma value
-
+    imshow("gaussian",matBlurred);
     // filter image from grayscale to black and white
     cv::adaptiveThreshold(matBlurred,                           // input image
                           matThresh,                            // output image
@@ -83,7 +90,7 @@ void numberRecognition(Mat matTestingNumbers)
                           cv::THRESH_BINARY_INV,                // invert so foreground will be white, background will be black
                           11,                                   // size of a pixel neighborhood used to calculate threshold value
                           2);                                   // constant subtracted from the mean or weighted mean
-
+    imshow("black & white",matThresh);
     matThreshCopy = matThresh.clone();              // make a copy of the thresh image, this in necessary b/c findContours modifies the image
 
     std::vector<std::vector<cv::Point> > ptContours;        // declare a vector for the contours
@@ -116,7 +123,7 @@ void numberRecognition(Mat matTestingNumbers)
     for (size_t i = 0; i < validContoursWithData.size(); i++) {            // for each contour
 
         // draw a green rect around the current char
-        cv::rectangle(matTestingNumbers,                            // draw rectangle on original image
+        cv::rectangle(matTestingNumbersROI,                            // draw rectangle on original image
                       validContoursWithData[i].boundingRect,        // rect to draw
                       cv::Scalar(0, 255, 0),                        // green
                       2);                                           // thickness
@@ -133,16 +140,19 @@ void numberRecognition(Mat matTestingNumbers)
 
         cv::Mat matCurrentChar(0, 0, CV_32F);
 
-        kNearest->findNearest(matROIFlattenedFloat, 1, matCurrentChar);     // finally we can call find_nearest !!!
+        kNearest->findNearest(matROIFlattenedFloat, 3, matCurrentChar);     // finally we can call find_nearest !!!
 
         float fltCurrentChar = static_cast<float>(matCurrentChar.at<float>(0, 0));
 
         strFinalString = strFinalString + char(int(fltCurrentChar));        // append current char to full string
     }
 
-    cout << "\n\n" << "numbers read = " << strFinalString << endl;       // show the full string
+    std::cout << "\n\n" << "numbers read = " << strFinalString << std::endl;       // show the full string
 
     cv::imshow("matTestingNumbers", matTestingNumbers);     // show input image with green boxes drawn around found digits
+    cv::moveWindow("matTestingNumbers",600,400);
 
-    cv::waitKey(0);
+    cv::waitKey(150);
+
+    return;
 }
