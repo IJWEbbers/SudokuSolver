@@ -35,7 +35,7 @@ void MainWindow::on_pushButton_File_clicked()
         ui->statusBar->showMessage(QString("Could not open image!"),0);
     }
     else {
-        grid.splitGrid(grid.removeGridLines(grid.findGrid(src)),splitSudoku);
+        grid.splitGrid(src,splitSudoku);
         numberRecognition(splitSudoku[3][0]);
     }
 }

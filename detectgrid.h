@@ -26,7 +26,7 @@ private:
 public:
     Mat findGrid(Mat grayScaleSrc);
     Mat removeGridLines(Mat grid);
-    void splitGrid(Mat grid, Mat gridArray[9][9]);
+    void splitGrid(Mat grayscaleGridSrc, Mat gridArray[9][9]);
 };
 
 #endif // DETECTGRID_H

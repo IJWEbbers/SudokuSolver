@@ -109,10 +109,9 @@ Mat DetectGrid::removeGridLines(Mat grid)
     //apply morphology operations
     erode(horizontal, horizontal, getStructuringElement(MORPH_RECT, Size(horizontalsize,1)), Point(-1, -1));
     dilate(horizontal, horizontal, getStructuringElement(MORPH_RECT, Size(horizontalsize,1)), Point(-1, -1));
-
-    //apply morphology operations
     erode(vertical, vertical, getStructuringElement(MORPH_RECT, Size( 1,verticalsize)), Point(-1, -1));
     dilate(vertical, vertical, getStructuringElement(MORPH_RECT, Size( 1,verticalsize)), Point(-1, -1));
+
     bw = bw - (horizontal + vertical);
     morphologyEx(bw,bw,MORPH_OPEN,getStructuringElement(MORPH_RECT, Size( 3,3)));
 
@@ -122,8 +121,11 @@ Mat DetectGrid::removeGridLines(Mat grid)
 
 
 //Function to assign every box in the grid to a position in an array
-void DetectGrid::splitGrid(Mat grid, Mat gridArray[9][9])
+void DetectGrid::splitGrid(Mat grayscaleGridSrc, Mat gridArray[9][9])
 {
+    //find the grid and remove the lines
+    Mat grid = removeGridLines(findGrid(grayscaleGridSrc));
+
     cvtColor(grid,grid,COLOR_GRAY2BGR);
     Mat smallimage;
 
