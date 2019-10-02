@@ -21,7 +21,7 @@ void numberRecognition(Mat matTestingNumbers)
 
     cv::Mat matClassificationInts;      // we will read the classification numbers into this variable as though it is a vector
 
-    cv::FileStorage fsClassifications("C:/HAN/Semester_7 Vision minor/Project Git/SudokuSolver/classifications.xml", cv::FileStorage::READ);        // open the classifications file
+    cv::FileStorage fsClassifications("../SudokuSolver/classifications.xml", cv::FileStorage::READ);        // open the classifications file
 
     if (fsClassifications.isOpened() == false) {                                                    // if the file was not opened successfully
         std::cout << "error, unable to open training classifications file, exiting program\n\n";    // show error message
@@ -35,7 +35,7 @@ void numberRecognition(Mat matTestingNumbers)
 
     cv::Mat matTrainingImagesAsFlattenedFloats;         // we will read multiple images into this single image variable as though it is a vector
 
-    cv::FileStorage fsTrainingImages("C:/HAN/Semester_7 Vision minor/Project Git/SudokuSolver/images.xml", cv::FileStorage::READ);          // open the training images file
+    cv::FileStorage fsTrainingImages("../SudokuSolver/images.xml", cv::FileStorage::READ);          // open the training images file
 
     if (fsTrainingImages.isOpened() == false) {                                                 // if the file was not opened successfully
         std::cout << "error, unable to open training images file, exiting program\n\n";         // show error message

@@ -89,14 +89,45 @@ Mat DetectGrid::findGrid(Mat grayScaleSrc)
     mat = Mat::zeros(grayScaleSrc.size(), grayScaleSrc.type());
     wrap = getPerspectiveTransform(warpIn, warpOut);
     warpPerspective(srcb, mat, wrap, Size(450, 450));
-
     return mat;
 }
+
+Mat DetectGrid::removeGridLines(Mat grid)
+{
+    //apply adaptiveThreshold at the bitwise_not of gray, notice the ~ symbol
+    Mat bw;
+    adaptiveThreshold(~grid, bw, 255, ADAPTIVE_THRESH_MEAN_C, THRESH_BINARY, 15, -2);
+
+    //create the images that will use to extract the horizontal and vertical lines
+    Mat horizontal = bw.clone();
+    Mat vertical = bw.clone();
+
+    //specify size on axis
+    int horizontalsize = horizontal.cols / 10;
+    int verticalsize = vertical.rows / 10;
+
+    //apply morphology operations
+    erode(horizontal, horizontal, getStructuringElement(MORPH_RECT, Size(horizontalsize,1)), Point(-1, -1));
+    dilate(horizontal, horizontal, getStructuringElement(MORPH_RECT, Size(horizontalsize,1)), Point(-1, -1));
+
+    //apply morphology operations
+    erode(vertical, vertical, getStructuringElement(MORPH_RECT, Size( 1,verticalsize)), Point(-1, -1));
+    dilate(vertical, vertical, getStructuringElement(MORPH_RECT, Size( 1,verticalsize)), Point(-1, -1));
+    bw = bw - (horizontal + vertical);
+    morphologyEx(bw,bw,MORPH_OPEN,getStructuringElement(MORPH_RECT, Size( 3,3)));
+
+    return bw;
+}
+
+
 
 //Function to assign every box in the grid to a position in an array
 void DetectGrid::splitGrid(Mat grid, Mat gridArray[9][9])
 {
+    cvtColor(grid,grid,COLOR_GRAY2BGR);
     Mat smallimage;
+
+    //split the full grid into smaller images each with the size of 50x50 pixels
     for (int m=0; m < 450; m += 50)
     {
         for (int n = 0; n < 450; n += 50)

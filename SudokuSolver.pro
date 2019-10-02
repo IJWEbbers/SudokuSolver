@@ -14,10 +14,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         detectgrid.cpp \
+        numberrecognition.cpp \
         mainwindow.cpp
 
 HEADERS  += mainwindow.h \
-    detectgrid.h
+    detectgrid.h \
+    numberrecognition.h
 
 FORMS    += mainwindow.ui
 

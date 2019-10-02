@@ -25,6 +25,7 @@ private:
     int topRight = 0;
 public:
     Mat findGrid(Mat grayScaleSrc);
+    Mat removeGridLines(Mat grid);
     void splitGrid(Mat grid, Mat gridArray[9][9]);
 };
 

@@ -1,15 +1,12 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "detectgrid.h"
 #include "numberrecognition.h"
 #include "opencv2/imgproc.hpp"
 #include "opencv2/highgui.hpp"
 #include "opencv2/imgcodecs.hpp"
 #include <iostream>
 #include <sstream>
-
-
-// global variables
-
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -26,43 +23,20 @@ MainWindow::~MainWindow()
 using namespace cv;
 using namespace std;
 
-Mat src_gray;
-int thresh = 10;
-RNG rng(12345);
-
-void thresh_callback(int, void* );
-
-
-
 void MainWindow::on_pushButton_File_clicked()
 {
     Mat src;
-    void step2(Mat src);
-    src = imread("C:/HAN/Semester_7 Vision minor/Project Git/SudokuSolver/Images/crackynumbers.png",IMREAD_COLOR);
+    Mat foundGrid;
+    Mat splitSudoku[9][9];
+    DetectGrid grid;
+
+    src = imread("../SudokuSolver/Images/sudoku2.jpg",IMREAD_GRAYSCALE);
     if(!src.data) {
         ui->statusBar->showMessage(QString("Could not open image!"),0);
     }
     else {
-
-        int height = src.rows, width = src.cols;
-        QString info;
-
-        // Get the image data
-        info.append(QString("Image info: "));
-        info.append(QString("height=%1 ").arg(height));
-        info.append(QString("width=%1 ").arg(width));
-
-        ui->statusBar->showMessage(info);
-
-        // Create a window
-        namedWindow("Original image", WINDOW_AUTOSIZE);
-        moveWindow("Original image", 100, 100);
-
-        // Show the image
-        imshow("Original image",src);
-
-        numberRecognition(src);
-
+        grid.splitGrid(grid.removeGridLines(grid.findGrid(src)),splitSudoku);
+        numberRecognition(splitSudoku[3][0]);
     }
 }
 
