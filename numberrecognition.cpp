@@ -12,7 +12,7 @@ const int RESIZED_IMAGE_WIDTH = 20;
 const int RESIZED_IMAGE_HEIGHT = 30;
 
 
-void numberRecognition(Mat matTestingNumbers)
+int numberRecognition(Mat matTestingNumbers)
 {
     std::vector<ContourWithData> allContoursWithData;           // declare empty vectors,
     std::vector<ContourWithData> validContoursWithData;         // we will fill these shortly
@@ -133,16 +133,30 @@ void numberRecognition(Mat matTestingNumbers)
 
         cv::Mat matCurrentChar(0, 0, CV_32F);
 
-        kNearest->findNearest(matROIFlattenedFloat, 1, matCurrentChar);     // finally we can call find_nearest !!!
+        kNearest->findNearest(matROIFlattenedFloat, 5, matCurrentChar);     // finally we can call find_nearest !!!
 
         float fltCurrentChar = static_cast<float>(matCurrentChar.at<float>(0, 0));
 
         strFinalString = strFinalString + char(int(fltCurrentChar));        // append current char to full string
     }
+    if(strFinalString.empty())
+    {
+        strFinalString = "0";
+    }
+    //cout << "\n\n" << "numbers read = " << strFinalString << endl;       // show the full string
+    //cv::imshow("matTestingNumbers", matTestingNumbers);     // show input image with green boxes drawn around found digits
+    return stoi(strFinalString);
+}
 
-    cout << "\n\n" << "numbers read = " << strFinalString << endl;       // show the full string
-
-    cv::imshow("matTestingNumbers", matTestingNumbers);     // show input image with green boxes drawn around found digits
-
-    cv::waitKey(0);
+void imgArrayToIntArray(Mat imgArray[9][9], int intArray[9][9])
+{
+    for(int y = 0; y < 9; y++)
+    {
+        for(int x = 0; x < 9; x++)
+        {
+            intArray[x][y] = numberRecognition(imgArray[x][y]);
+            cout << intArray[x][y] << ",";
+        }
+        cout << endl;
+    }
 }

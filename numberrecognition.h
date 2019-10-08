@@ -30,6 +30,6 @@ public:
 
 };
 
-void numberRecognition(Mat matTestingNumbers);
-
+int numberRecognition(Mat matTestingNumbers);
+void imgArrayToIntArray(Mat imgArray[9][9], int intArray[9][9]);
 #endif // NUMBERRECOGNITION_H

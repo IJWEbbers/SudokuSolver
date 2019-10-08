@@ -28,6 +28,7 @@ void MainWindow::on_pushButton_File_clicked()
     Mat src;
     Mat foundGrid;
     Mat splitSudoku[9][9];
+    int numberArray[9][9];
     DetectGrid grid;
 
     src = imread("../SudokuSolver/Images/sudoku2.jpg",IMREAD_GRAYSCALE);
@@ -36,7 +37,7 @@ void MainWindow::on_pushButton_File_clicked()
     }
     else {
         grid.splitGrid(src,splitSudoku);
-        numberRecognition(splitSudoku[3][0]);
+        imgArrayToIntArray(splitSudoku,numberArray);
     }
 }
 
