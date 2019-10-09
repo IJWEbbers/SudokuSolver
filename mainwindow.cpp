@@ -29,7 +29,7 @@ void MainWindow::on_pushButton_File_clicked()
 {
     Mat src;
     void step2(Mat src);
-    src = imread("C:/HAN/Semester_7 Vision minor/Project Git/SudokuSolver/Images/6v1.PNG",IMREAD_COLOR);
+    src = imread("C:/HAN/Semester_7 Vision minor/Project Git/SudokuSolver/Images/Numbers3.png",IMREAD_COLOR);
     if(!src.data) {
         ui->statusBar->showMessage(QString("Could not open image!"),0);
     }

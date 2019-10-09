@@ -22,8 +22,8 @@ void numberRecognition(cv::Mat matTestingNumbers)
     std::vector<ContourWithData> validContoursWithData;         // we will fill these shortly
 
     //=============Configure the Region Of Interest(ROI)===============
+    //cv::Mat matTestingNumbersROI = matTestingNumbers;
     cv::Mat matTestingNumbersROI = matTestingNumbers(cv::Rect(200,200,200,100));//creating a rectangle of size 200x100 at point (200,200) on the videofeed
-
     cv::Rect rect(198, 198, 204, 104);//Define the rectangle size
     rectangle(matTestingNumbers, rect, cv::Scalar(0, 0, 255),2);//Put the rectangle on the original webcam image. We do operations with matTestingNumbersROI. so if we would put a rectangle on matTestingNumbersROI, the program thinks the rectangle is a number
 
@@ -140,7 +140,7 @@ void numberRecognition(cv::Mat matTestingNumbers)
 
         cv::Mat matCurrentChar(0, 0, CV_32F);
 
-        kNearest->findNearest(matROIFlattenedFloat, 3, matCurrentChar);     // finally we can call find_nearest !!!
+        kNearest->findNearest(matROIFlattenedFloat, 7, matCurrentChar);     // finally we can call find_nearest !!!
 
         float fltCurrentChar = static_cast<float>(matCurrentChar.at<float>(0, 0));
 
@@ -152,7 +152,7 @@ void numberRecognition(cv::Mat matTestingNumbers)
     cv::imshow("matTestingNumbers", matTestingNumbers);     // show input image with green boxes drawn around found digits
     cv::moveWindow("matTestingNumbers",600,400);
 
-    cv::waitKey(150);
+    cv::waitKey(50);
 
     return;
 }
