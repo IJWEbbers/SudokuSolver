@@ -7,7 +7,7 @@
 #include <iostream>
 #include <sstream>
 
-// global variables
+// ====== global variables =====
 const int RESIZED_IMAGE_WIDTH = 20;
 const int RESIZED_IMAGE_HEIGHT = 30;
 
@@ -91,12 +91,12 @@ void numberRecognition(cv::Mat matTestingNumbers)
                           11,                                   // size of a pixel neighborhood used to calculate threshold value
                           2);                                   // constant subtracted from the mean or weighted mean
     imshow("black & white",matThresh);
-    matThreshCopy = matThresh.clone();              // make a copy of the thresh image, this in necessary b/c findContours modifies the image
+    matThreshCopy = matThresh.clone();                      // make a copy of the thresh image, this in necessary b/c findContours modifies the image
 
     std::vector<std::vector<cv::Point> > ptContours;        // declare a vector for the contours
     std::vector<cv::Vec4i> v4iHierarchy;                    // declare a vector for the hierarchy (we won't use this in this program but this may be helpful for reference)
 
-    cv::findContours(matThreshCopy,             // input image, make sure to use a copy since the function will modify this image in the course of finding contours
+    cv::findContours(matThreshCopy,                          // input image, make sure to use a copy since the function will modify this image in the course of finding contours
                      ptContours,                             // output contours
                      v4iHierarchy,                           // output hierarchy
                      cv::RETR_EXTERNAL,                      // retrieve the outermost contours only

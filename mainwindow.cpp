@@ -35,8 +35,8 @@ void MainWindow::on_pushButton_File_clicked()
     }
     else {
 
-        //trainingNumbers();
-        numberRecognition(src);
+        trainingNumbers();
+        //numberRecognition(src);
 
     }
 }
@@ -73,5 +73,4 @@ void MainWindow::on_pushButton_Webcam_clicked()
             }
         }
     }
-
 }
