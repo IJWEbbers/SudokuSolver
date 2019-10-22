@@ -66,34 +66,21 @@ void MainWindow::on_pushButton_Webcam_clicked()
             for (int i=0;i<100;i++) {
                 // Create images
                 Mat src(width,height,CV_8UC1,1);
-                Mat dst(width,height,CV_8UC1,1);
-                Mat Edge(width,height,CV_8UC1,1);
+                Mat foundGrid;
+                Mat splitSudoku[9][9];
+                int numberArray[9][9];
+                DetectGrid grid;
 
                 // Take snapshot
                 Img >> Cam;
                 // Convert to grayscale
                 cvtColor(Cam,src,COLOR_BGR2GRAY);
-                // Threshold
-                threshold(src,dst,130,255,THRESH_BINARY);
-                // Edge detection
-                Canny(src,Edge,150,255,3);
 
-                // Create Windows
-                namedWindow("Snapshot",WINDOW_AUTOSIZE);
-                moveWindow("Snapshot",100,5);
-                namedWindow("GrayScale",WINDOW_AUTOSIZE);
-                moveWindow("GrayScale",650,5);
-                namedWindow("Threshold",WINDOW_AUTOSIZE);
-                moveWindow("Threshold",100,500);
-                namedWindow("Edge",WINDOW_AUTOSIZE);
-                moveWindow("Edge",650,500);
+                imshow("camera", src);
+                grid.splitGrid(src,splitSudoku);
+                imgArrayToIntArray(splitSudoku,numberArray);
 
-                // Show images
-                imshow("Snapshot",Cam);
-                imshow("GrayScale", src);
-                imshow("Threshold",dst);
-                imshow("Edge",Edge);
-                QCoreApplication::processEvents();
+                waitKey(300);
             }
         }
     }

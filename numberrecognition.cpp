@@ -159,4 +159,5 @@ void imgArrayToIntArray(Mat imgArray[9][9], int intArray[9][9])
         }
         cout << endl;
     }
+    cout << endl;
 }
