@@ -11,7 +11,7 @@
 #include <vector>
 
 //============================= global variables ===================================
-const int MIN_CONTOUR_AREA = 100;
+const int MIN_CONTOUR_AREA = 50;
 
 const int RESIZED_IMAGE_WIDTH = 20;
 const int RESIZED_IMAGE_HEIGHT = 30;
@@ -21,73 +21,7 @@ using namespace cv;
 using namespace std;
 void trainingNumbers() {
 
-    int num = 797;
-    int size = 16 * 16;
-    Mat trainData = Mat(Size(size, num), CV_32FC1);
-    Mat responces = Mat(Size(1, num), CV_32FC1);
-    int counter = 0;
-    for(int i=0;i<=9;i++)
-    {
-        // reading the images from the folder of tarining samples
-        DIR *dir;
-        struct dirent *ent;
-        char pathToImages[]="./digits3"; // name of the folder containing images
-        char path[255];
-        sprintf(path, "%s/%d", pathToImages, i);
-        if ((dir = opendir(path)) != NULL)
-        {
-            while ((ent = readdir (dir)) != NULL)
-            {
-                if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0 )
-                {
-                    char text[255];
-                    sprintf(text,"/%s",ent->d_name);
-                    string digit(text);
-                    digit=path+digit;
-                    Mat mat=imread(digit,1); //loading the image
-                    cvtColor(mat,mat,COLOR_BGR2GRAY);  //converting into grayscale
-                    threshold(mat , mat , 200, 255 ,THRESH_OTSU); // preprocessing
-                    mat.convertTo(mat,CV_32FC1,1.0/255.0); //necessary to convert images to CV_32FC1 for using K nearest neighbour algorithm.
-                    resize(mat, mat, Size(16,16 ),0,0,INTER_NEAREST); // same size as our testing samples
-                    mat.reshape(1,1);
-                    for (int k=0; k<size;k++)
-                    {
-                        trainData.at<float>(counter*size+k) = mat.at<float>(k); // storing the pixels of the image
-                    }
-                    responces.at<float>(counter) = i; // stroing the responce corresponding to image
-                    counter++;
-                }
-            }
-        }
-        // ========================== save classifications to file =============================
-
-        cv::FileStorage fsClassifications("classifications.xml", cv::FileStorage::WRITE);           // open the classifications file
-
-        if (fsClassifications.isOpened() == false) {                                                        // if the file was not opened successfully
-            std::cout << "error, unable to open training classifications file, exiting program\n\n";        // show error message
-            return;                                                                                      // and exit program
-        }
-
-        fsClassifications << "classifications" << responces;        // write classifications into classifications section of classifications file
-        fsClassifications.release();
-        //============================ save training images to file ========================
-
-        cv::FileStorage fsTrainingImages("images.xml", cv::FileStorage::WRITE);         // open the training images file
-
-        if (fsTrainingImages.isOpened() == false) {                                                 // if the file was not opened successfully
-            std::cout << "error, unable to open training images file, exiting program\n\n";         // show error message
-            return;                                                                              // and exit program
-        }
-
-        fsTrainingImages << "images" << trainData;         // write training images into images section of images file
-        fsTrainingImages.release();
-        closedir(dir);
-    }
-
-   // KNearest knearest(trainData,responces  );
-   // knearest.train(trainData,responces);
-
-    /* cv::Mat imgTrainingNumbers;         // input image
+    cv::Mat imgTrainingNumbers;         // input image
     cv::Mat imgGrayscale;               //
     cv::Mat imgBlurred;                 // declare various images
     cv::Mat imgThresh;                  //
@@ -198,7 +132,7 @@ void trainingNumbers() {
     }
 
     fsTrainingImages << "images" << matTrainingImagesAsFlattenedFloats;         // write training images into images section of images file
-    fsTrainingImages.release(); */                                                // close the training images file
+    fsTrainingImages.release();                                              // close the training images file
 
     return;
 }
