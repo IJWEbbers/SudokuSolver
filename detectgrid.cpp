@@ -126,7 +126,7 @@ void DetectGrid::splitGrid(Mat grayscaleGridSrc, Mat gridArray[9][9])
     //find the grid and remove the lines
     Mat grid = removeGridLines(findGrid(grayscaleGridSrc));
 
-    cvtColor(grid,grid,COLOR_GRAY2BGR);
+    cvtColor(~grid,grid,COLOR_GRAY2BGR);
     Mat smallimage;
 
     //split the full grid into smaller images each with the size of 50x50 pixels
