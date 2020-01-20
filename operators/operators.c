@@ -830,7 +830,7 @@ float normalizedCentralMoments( const image_t *img
     return 0.0f;
 }
 
-void copyRect(image_t *src, image_t *dst, int32_t topLeftCol, int32_t topLeftRow, int32_t width, int32_t height)
+void copyRect(image_t *src, image_t *dst, int32_t topLeftRow, int32_t topLeftCol, int32_t width, int32_t height)
 {
     basic_pixel_t *d = (basic_pixel_t *)dst->data;
 

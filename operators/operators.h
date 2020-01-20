@@ -519,8 +519,8 @@ float normalizedCentralMoments( const image_t *img
 // Postcondition: -
 void copyRect(image_t *src
               , image_t *dst
-              , int32_t topLeftCol
               , int32_t topLeftRow
+              , int32_t topLeftCol
               , int32_t width
               , int32_t height);
 

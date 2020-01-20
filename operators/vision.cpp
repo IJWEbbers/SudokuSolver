@@ -272,6 +272,20 @@ void MainWindow::vision(image_t *img)
     invert(cutout,cutout);
     showImg(cutout, "warpthresh");
 
+    image_t *smallcutout = newBasicImage(50,50);
+    uint32_t m,n;
+    //rows
+    for (m = 0; m < 450; m += 50)
+    {
+        //columns
+        for (n = 0; n < 450; n += 50)
+        {
+            copyRect(cutout,smallcutout,m,n,50,50);
+            showImg(smallcutout, "smallcutout");
+            //------------------------------------AI zooi hier met smallcutout-----------------------------------
+        }
+    }
+
     // Clean up
     deleteImage(warp);
     deleteImage(cutout);
